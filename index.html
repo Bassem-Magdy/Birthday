@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A Surprise for Sondos 🌸</title>
+
+  <meta property="og:title" content="A Surprise for Sondos 🌸" />
+  <meta property="og:description" content="Something special is waiting for you…" />
+  <meta name="theme-color" content="#1a0a2e" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS — edit these to change the whole colour scheme
+    ============================================================ */
+    :root {
+      --indigo:   #1a0a2e;
+      --indigo-2: #2d1050;
+      --blush:    #f7b8c4;
+      --mauve:    #c9708a;
+      --rose:     #a34060;
+      --cream:    #fff5f7;
+      --gold:     #e8c57a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--indigo);
+      color: var(--cream);
+      font-family: 'Lato', system-ui, sans-serif;
+      font-weight: 300;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ============================================================
+       LOCK SCREEN
+    ============================================================ */
+    #lock-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--indigo);
+      gap: 2rem;
+      transition: opacity 0.8s ease;
+    }
+
+    #lock-screen::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 80% 60%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 25%, rgba(255,255,255,0.35) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 10%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.3) 0%, transparent 100%);
+      pointer-events: none;
+      animation: twinkle 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      0%   { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    .lock-icon {
+      width: 72px;
+      height: 72px;
+      border: 2px solid var(--mauve);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse-ring 3s ease-in-out infinite;
+    }
+
+    .lock-icon svg { width: 32px; height: 32px; fill: var(--blush); }
+
+    @keyframes pulse-ring {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(201,112,138,0.4); }
+      50%       { box-shadow: 0 0 0 18px rgba(201,112,138,0); }
+    }
+
+    .lock-label {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(1rem, 4vw, 1.25rem);
+      color: var(--blush);
+      letter-spacing: 0.12em;
+      opacity: 0.75;
+    }
+
+    .countdown {
+      display: flex;
+      gap: clamp(1rem, 5vw, 2.5rem);
+      align-items: flex-start;
+    }
+
+    .time-unit { display: flex; flex-direction: column; align-items: center; gap: 0.4rem; }
+
+    .time-digit {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.8rem, 12vw, 5rem);
+      font-weight: 300;
+      line-height: 1;
+      color: var(--cream);
+      min-width: 2ch;
+      text-align: center;
+      text-shadow: 0 0 30px rgba(247,184,196,0.35);
+    }
+
+    .time-label {
+      font-size: clamp(0.55rem, 2vw, 0.7rem);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mauve);
+      opacity: 0.8;
+    }
+
+    .time-sep {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2rem, 10vw, 4rem);
+      color: var(--mauve);
+      opacity: 0.5;
+      line-height: 1;
+      padding-top: 0.15em;
+    }
+
+    .lock-divider {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.5;
+    }
+
+    /* ============================================================
+       BLOOM OVERLAY — Telegram-style transition
+    ============================================================ */
+    #bloom-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+    }
+
+    #bloom-circle {
+      width: 100vmax;
+      height: 100vmax;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--blush) 0%, var(--mauve) 40%, var(--indigo-2) 100%);
+      transform: scale(0);
+      opacity: 0;
+    }
+
+    #bloom-overlay.blooming { opacity: 1; }
+
+    #bloom-overlay.blooming #bloom-circle {
+      animation: bloom-expand 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes bloom-expand {
+      0%   { transform: scale(0); opacity: 1; }
+      70%  { transform: scale(1.6); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    /* ============================================================
+       BIRTHDAY SCREEN
+    ============================================================ */
+    #birthday-screen {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: clamp(2rem, 8vw, 5rem) clamp(1.25rem, 6vw, 3rem) clamp(2rem, 6vw, 4rem);
+      gap: 0;
+      opacity: 0;
+      transform: translateY(24px);
+      background:
+        radial-gradient(ellipse at 20% 0%, rgba(201,112,138,0.18) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 100%, rgba(163,64,96,0.14) 0%, transparent 50%),
+        var(--indigo);
+      transition: opacity 0.9s ease 0.5s, transform 0.9s ease 0.5s;
+    }
+
+    #birthday-screen.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---- Header ---- */
+    .bday-header { text-align: center; margin-bottom: 3rem; }
+
+    .bday-eyebrow {
+      display: block;
+      font-size: clamp(0.6rem, 2.5vw, 0.75rem);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.8;
+      margin-bottom: 1rem;
+    }
+
+    .bday-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(2.6rem, 10vw, 5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      color: var(--cream);
+    }
+
+    .bday-title em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--blush) 0%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .bday-subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(1rem, 4vw, 1.3rem);
+      color: var(--blush);
+      opacity: 0.65;
+      margin-top: 0.6rem;
+      letter-spacing: 0.04em;
+    }
+
+    .divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 2.5rem auto;
+      opacity: 0.45;
+    }
+
+    /* ============================================================
+       3D HEART SCENE
+    ============================================================ */
+    .hearts-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      height: 210px;
+      margin: 0 auto 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Glow pulse behind the main heart */
+    .heart-glow {
+      position: absolute;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,80,120,0.35) 0%, transparent 70%);
+      animation: glow-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% { transform: scale(1);   opacity: 0.6; }
+      15%       { transform: scale(1.3); opacity: 0.9; }
+      60%       { transform: scale(1);   opacity: 0.6; }
+    }
+
+    /* Main beating heart */
+    .main-heart-svg {
+      position: relative;
+      z-index: 2;
+      animation: beat3d 1.4s ease-in-out infinite;
+      filter:
+        drop-shadow(0 8px 28px rgba(201,80,120,0.6))
+        drop-shadow(0 2px 8px rgba(0,0,0,0.45));
+    }
+
+    @keyframes beat3d {
+      0%, 100% { transform: scale(1)    translateY(0px); }
+      15%       { transform: scale(1.18) translateY(-4px); }
+      30%       { transform: scale(0.94) translateY(2px); }
+      45%       { transform: scale(1.10) translateY(-2px); }
+      60%       { transform: scale(1)    translateY(0px); }
+    }
+
+    /* Satellite hearts */
+    .sat-heart {
+      position: absolute;
+      animation: flt3d var(--d,4s) ease-in-out infinite var(--dl,0s);
+      opacity: var(--op,0.7);
+      z-index: 1;
+    }
+
+    @keyframes flt3d {
+      0%, 100% { transform: translateY(0) rotate(var(--rot,0deg)) scale(1); }
+      50%       { transform: translateY(var(--rise,-14px)) rotate(var(--rot,0deg)) scale(1.05); }
+    }
+
+    .s1 { left:2%;   top:8%;     --d:3.4s; --dl:0s;   --rot:-12deg; --rise:-12px; --op:0.65; }
+    .s2 { right:2%;  top:6%;     --d:4.1s; --dl:.5s;  --rot:9deg;   --rise:-16px; --op:0.55; }
+    .s3 { left:10%;  bottom:10%; --d:5s;   --dl:1s;   --rot:-6deg;  --rise:-10px; --op:0.5;  }
+    .s4 { right:8%;  bottom:12%; --d:3.8s; --dl:.8s;  --rot:14deg;  --rise:-13px; --op:0.6;  }
+    .s5 { left:40%;  top:2%;     --d:4.5s; --dl:1.5s; --rot:-3deg;  --rise:-9px;  --op:0.45; }
+
+    /* ============================================================
+       MESSAGE CARD
+    ============================================================ */
+    .message-card {
+      width: 100%;
+      max-width: 520px;
+      background: rgba(255,245,247,0.04);
+      border: 1px solid rgba(247,184,196,0.15);
+      border-radius: 20px;
+      padding: clamp(1.75rem, 7vw, 2.75rem);
+      text-align: center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .message-card::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 180px; height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,112,138,0.2) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .message-card::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,197,122,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .card-to {
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.7;
+      margin-bottom: 1.4rem;
+    }
+
+    /* ============================================================
+       ✏️  EDIT YOUR MESSAGE in the HTML below (inside .card-message)
+    ============================================================ */
+    .card-message {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(1.1rem, 4.5vw, 1.35rem);
+      font-weight: 300;
+      line-height: 1.85;
+      color: var(--cream);
+      opacity: 0.92;
+    }
+
+    .card-message em { font-style: italic; color: var(--blush); }
+
+    .card-signature {
+      margin-top: 1.8rem;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(0.95rem, 3.5vw, 1.1rem);
+      color: var(--gold);
+      opacity: 0.75;
+    }
+
+    /* ============================================================
+       FALLING PETALS
+    ============================================================ */
+    .petals-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .petal {
+      position: absolute;
+      top: -20px;
+      border-radius: 50% 0 50% 0;
+      opacity: 0;
+      animation: fall-petal var(--fall-dur,8s) linear var(--fall-delay,0s) infinite;
+    }
+
+    @keyframes fall-petal {
+      0%   { transform: translateX(0) translateY(-20px) rotate(0deg); opacity: 0; }
+      10%  { opacity: var(--petal-op,0.35); }
+      90%  { opacity: var(--petal-op,0.35); }
+      100% { transform: translateX(var(--drift,60px)) translateY(105vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 420px) {
+      .hearts-wrap { height: 175px; max-width: 270px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Falling petals (spawned by JS after unlock) -->
+  <div class="petals-container" id="petals-container"></div>
+
+  <!-- ============================================================
+       LOCK SCREEN
+  ============================================================ -->
+  <div id="lock-screen">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18 10V7a6 6 0 1 0-12 0v3H4v12h16V10h-2zM8 7a4 4 0 1 1 8 0v3H8V7zm4 9a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+      </svg>
+    </div>
+
+    <p class="lock-label">something special is waiting…</p>
+
+    <div class="countdown">
+      <div class="time-unit">
+        <span class="time-digit" id="cd-days">00</span>
+        <span class="time-label">days</span>
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-unit">
+        <span class="time-digit" id="cd-hours">00</span>
+        <span class="time-label">hours</span>
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-unit">
+        <span class="time-digit" id="cd-minutes">00</span>
+        <span class="time-label">min</span>
+      </div>
+      <span class="time-sep">:</span>
+      <div class="time-unit">
+        <span class="time-digit" id="cd-seconds">00</span>
+        <span class="time-label">sec</span>
+      </div>
+    </div>
+
+    <div class="lock-divider"></div>
+    <p class="lock-label" style="font-size:0.7rem;opacity:0.4;letter-spacing:0.2em;">for Sondos, with love</p>
+  </div>
+
+  <!-- ============================================================
+       BLOOM OVERLAY (Telegram-style transition)
+  ============================================================ -->
+  <div id="bloom-overlay">
+    <div id="bloom-circle"></div>
+  </div>
+
+  <!-- ============================================================
+       BIRTHDAY SCREEN
+  ============================================================ -->
+  <div id="birthday-screen">
+
+    <header class="bday-header">
+      <span class="bday-eyebrow">✦ 23 June 2026 ✦</span>
+      <h1 class="bday-title">Happy Birthday,<br><em>Sondos</em></h1>
+      <p class="bday-subtitle">may today be as magical as you are</p>
+    </header>
+
+    <!-- 3D Heart animation -->
+    <div class="hearts-wrap" role="img" aria-label="Animated 3D hearts">
+
+      <!-- Glow ring behind main heart -->
+      <div class="heart-glow"></div>
+
+      <!-- Main 3D heart: SVG path + layered radial gradients for volume & shine -->
+      <svg class="main-heart-svg" width="130" height="120" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Base colour with depth -->
+          <radialGradient id="hBase" cx="42%" cy="35%" r="62%">
+            <stop offset="0%"   stop-color="#f06090"/>
+            <stop offset="45%"  stop-color="#c0365a"/>
+            <stop offset="100%" stop-color="#7a1530"/>
+          </radialGradient>
+          <!-- Volume shadow (lower half darkens) -->
+          <radialGradient id="hMid" cx="55%" cy="60%" r="55%">
+            <stop offset="0%"   stop-color="#e8557a" stop-opacity="0"/>
+            <stop offset="60%"  stop-color="#9e2040" stop-opacity=".55"/>
+            <stop offset="100%" stop-color="#5c0d20" stop-opacity=".8"/>
+          </radialGradient>
+          <!-- Primary specular highlight (top-left lobe) -->
+          <radialGradient id="hShine" cx="32%" cy="22%" r="30%">
+            <stop offset="0%"   stop-color="#ffccd8" stop-opacity=".85"/>
+            <stop offset="100%" stop-color="#ffccd8" stop-opacity="0"/>
+          </radialGradient>
+          <!-- Secondary highlight (right lobe) -->
+          <radialGradient id="hShine2" cx="68%" cy="20%" r="18%">
+            <stop offset="0%"   stop-color="#ffecf0" stop-opacity=".6"/>
+            <stop offset="100%" stop-color="#ffecf0" stop-opacity="0"/>
+          </radialGradient>
+          <!-- Bottom reflection -->
+          <radialGradient id="hReflect" cx="50%" cy="96%" r="30%">
+            <stop offset="0%"   stop-color="#ff85a8" stop-opacity=".4"/>
+            <stop offset="100%" stop-color="#ff85a8" stop-opacity="0"/>
+          </radialGradient>
+          <!-- Rim light (edges catch light) -->
+          <radialGradient id="hRim" cx="50%" cy="50%" r="52%">
+            <stop offset="75%"  stop-color="#ff6090" stop-opacity="0"/>
+            <stop offset="100%" stop-color="#ff90b8" stop-opacity=".35"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Heart shape rendered as 6 stacked gradient layers -->
+        <path d="M60 97C60 97 8 62 8 33C8 16 20 6 34 6C44 6 53 12 60 20C67 12 76 6 86 6C100 6 112 16 112 33C112 62 60 97 60 97Z" fill="url(#hBase)"/>
+        <path d="M60 97C60 97 8 62 8 33C8 16 20 6 34 6C44 6 53 12 60 20C67 12 76 6 86 6C100 6 112 16 112 33C112 62 60 97 60 97Z" fill="url(#hMid)"/>
+        <path d="M60 97C60 97 8 62 8 33C8 16 20 6 34 6C44 6 53 12 60 20C67 12 76 6 86 6C100 6 112 16 112 33C112 62 60 97 60 97Z" fill="url(#hRim)"/>
+        <path d="M60 97C60 97 8 62 8 33C8 16 20 6 34 6C44 6 53 12 60 20C67 12 76 6 86 6C100 6 112 16 112 33C112 62 60 97 60 97Z" fill="url(#hShine)"/>
+        <path d="M60 97C60 97 8 62 8 33C8 16 20 6 34 6C44 6 53 12 60 20C67 12 76 6 86 6C100 6 112 16 112 33C112 62 60 97 60 97Z" fill="url(#hShine2)"/>
+        <path d="M60 97C60 97 8 62 8 33C8 16 20 6 34 6C44 6 53 12 60 20C67 12 76 6 86 6C100 6 112 16 112 33C112 62 60 97 60 97Z" fill="url(#hReflect)"/>
+
+        <!-- Gloss streak on top-left lobe -->
+        <ellipse cx="38" cy="24" rx="10" ry="6" fill="white" opacity="0.22" transform="rotate(-35 38 24)"/>
+        <!-- Bright specular pinpoint -->
+        <ellipse cx="34" cy="20" rx="4"  ry="2.5" fill="white" opacity="0.55" transform="rotate(-30 34 20)"/>
+      </svg>
+
+      <!-- Satellite hearts -->
+      <div class="sat-heart s1">
+        <svg width="28" height="26" viewBox="0 0 28 26" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sh1"  cx="38%" cy="30%" r="65%"><stop offset="0%" stop-color="#f9c8d4"/><stop offset="100%" stop-color="#b03060"/></radialGradient>
+            <radialGradient id="sh1s" cx="32%" cy="22%" r="35%"><stop offset="0%" stop-color="#fff" stop-opacity=".7"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh1)"/>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh1s)"/>
+        </svg>
+      </div>
+
+      <div class="sat-heart s2">
+        <svg width="22" height="20" viewBox="0 0 28 26" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sh2"  cx="38%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffe0a0"/><stop offset="100%" stop-color="#b07010"/></radialGradient>
+            <radialGradient id="sh2s" cx="32%" cy="22%" r="35%"><stop offset="0%" stop-color="#fff" stop-opacity=".65"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh2)"/>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh2s)"/>
+        </svg>
+      </div>
+
+      <div class="sat-heart s3">
+        <svg width="18" height="16" viewBox="0 0 28 26" xmlns="http://www.w3.org/2000/svg">
+          <defs><radialGradient id="sh3" cx="38%" cy="30%" r="65%"><stop offset="0%" stop-color="#f7b8c4"/><stop offset="100%" stop-color="#902050"/></radialGradient></defs>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh3)"/>
+        </svg>
+      </div>
+
+      <div class="sat-heart s4">
+        <svg width="24" height="22" viewBox="0 0 28 26" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="sh4"  cx="38%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffc8d8"/><stop offset="100%" stop-color="#a02848"/></radialGradient>
+            <radialGradient id="sh4s" cx="30%" cy="20%" r="32%"><stop offset="0%" stop-color="#fff" stop-opacity=".6"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/></radialGradient>
+          </defs>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh4)"/>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh4s)"/>
+        </svg>
+      </div>
+
+      <div class="sat-heart s5">
+        <svg width="15" height="13" viewBox="0 0 28 26" xmlns="http://www.w3.org/2000/svg">
+          <defs><radialGradient id="sh5" cx="38%" cy="30%" r="65%"><stop offset="0%" stop-color="#ffe8b0"/><stop offset="100%" stop-color="#c08020"/></radialGradient></defs>
+          <path d="M14 23C14 23 2 15 2 8C2 4 5 1.5 8 1.5C10.5 1.5 12.5 3 14 5C15.5 3 17.5 1.5 20 1.5C23 1.5 26 4 26 8C26 15 14 23 14 23Z" fill="url(#sh5)"/>
+        </svg>
+      </div>
+
+    </div><!-- /hearts-wrap -->
+
+    <div class="divider"></div>
+
+    <!-- Message card -->
+    <!-- ============================================================
+         ✏️  EDIT THE MESSAGE BELOW
+         Replace the text between the <p class="card-message"> tags.
+         Wrap words in <em>...</em> for the italic rose highlight style.
+    ============================================================ -->
+    <div class="message-card">
+      <p class="card-to">a note for you</p>
+      <p class="card-message">
+        On this day, the world became a little <em>warmer</em>, a little brighter —
+        because you came into it.<br><br>
+        Every moment spent with you feels like the first page of a favourite story,
+        one I never want to put down.<br><br>
+        Thank you for your laughter, your kindness, and the way you see beauty in
+        the smallest things. You are <em>extraordinary</em>, and you deserve every
+        beautiful thing this life has to offer. 🌸
+      </p>
+      <!-- ✏️  Change the sign-off below -->
+      <p class="card-signature">— with all my love, always</p>
+    </div>
+
+    <div class="divider"></div>
+
+  </div><!-- /birthday-screen -->
+
+
+  <script>
+    /* ============================================================
+       ✏️  CONFIGURATION
+       Change TARGET_DATE to set when the page unlocks.
+       Format: 'YYYY-MM-DDTHH:MM:SS'  (viewer's local time)
+    ============================================================ */
+    const TARGET_DATE = new Date('2026-06-23T00:01:00');
+
+    /* DOM refs */
+    const lockScreen      = document.getElementById('lock-screen');
+    const bloomOverlay    = document.getElementById('bloom-overlay');
+    const birthdayScreen  = document.getElementById('birthday-screen');
+    const petalsContainer = document.getElementById('petals-container');
+
+    const cdDays    = document.getElementById('cd-days');
+    const cdHours   = document.getElementById('cd-hours');
+    const cdMinutes = document.getElementById('cd-minutes');
+    const cdSeconds = document.getElementById('cd-seconds');
+
+    /* ---- Countdown ---- */
+    function pad(n) { return String(Math.max(0, n)).padStart(2, '0'); }
+
+    function tick() {
+      const diff = TARGET_DATE - new Date();
+      if (diff <= 0) {
+        setCountdown(0, 0, 0, 0);
+        clearInterval(timer);
+        triggerUnlock();
+        return;
+      }
+      const t = Math.floor(diff / 1000);
+      setCountdown(
+        Math.floor(t / 86400),
+        Math.floor((t % 86400) / 3600),
+        Math.floor((t % 3600) / 60),
+        t % 60
+      );
+    }
+
+    function setCountdown(d, h, m, s) {
+      cdDays.textContent    = pad(d);
+      cdHours.textContent   = pad(h);
+      cdMinutes.textContent = pad(m);
+      cdSeconds.textContent = pad(s);
+    }
+
+    tick();
+    const timer = setInterval(tick, 1000);
+
+    /* ---- Unlock sequence ---- */
+    function triggerUnlock() {
+      bloomOverlay.classList.add('blooming');
+      setTimeout(() => {
+        lockScreen.style.opacity = '0';
+        lockScreen.style.pointerEvents = 'none';
+      }, 400);
+      setTimeout(() => {
+        lockScreen.style.display = 'none';
+        birthdayScreen.classList.add('visible');
+        spawnPetals();
+      }, 900);
+    }
+
+    /* ---- Petal spawner ---- */
+    function spawnPetals() {
+      const colors = ['#f7b8c4', '#e8c57a', '#c9708a', '#fff5f7'];
+      for (let i = 0; i < 18; i++) {
+        const el   = document.createElement('div');
+        el.classList.add('petal');
+        const size  = 6 + Math.random() * 10;
+        const left  = Math.random() * 100;
+        const dur   = 7 + Math.random() * 8;
+        const delay = Math.random() * 12;
+        const drift = (Math.random() - 0.5) * 120;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const op    = 0.2 + Math.random() * 0.25;
+        el.style.cssText = `
+          left:${left}%;width:${size}px;height:${size}px;
+          background:${color};
+          --fall-dur:${dur}s;--fall-delay:${delay}s;
+          --drift:${drift}px;--petal-op:${op};
+        `;
+        petalsContainer.appendChild(el);
+      }
+    }
+
+    /* ---- Dev helper ----
+       Open browser console and run unlockNow() to skip the countdown
+       and preview the birthday screen immediately.
+    ---- */
+    window.unlockNow = function () {
+      clearInterval(timer);
+      triggerUnlock();
+    };
+  </script>
+</body>
+</html>
