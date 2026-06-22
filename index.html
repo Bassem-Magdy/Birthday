@@ -628,101 +628,54 @@
 
   </div><!-- /birthday-screen -->
 
+<script>
+  /* DOM refs */
+  const lockScreen     = document.getElementById('lock-screen');
+  const bloomOverlay   = document.getElementById('bloom-overlay');
+  const birthdayScreen = document.getElementById('birthday-screen');
+  const petalsContainer = document.getElementById('petals-container');
 
-  <script>
-    /* ============================================================
-       ✏️  CONFIGURATION
-       Change TARGET_DATE to set when the page unlocks.
-       Format: 'YYYY-MM-DDTHH:MM:SS'  (viewer's local time)
-    ============================================================ */
-    const TARGET_DATE = new Date('2026-06-23T00:01:00');
+  /* ---- Unlock sequence ---- */
+  function triggerUnlock() {
+    bloomOverlay.classList.add('blooming');
+    setTimeout(() => {
+      lockScreen.style.opacity = '0';
+      lockScreen.style.pointerEvents = 'none';
+    }, 400);
+    setTimeout(() => {
+      lockScreen.style.display = 'none';
+      birthdayScreen.classList.add('visible');
+      spawnPetals();
+    }, 900);
+  }
 
-    /* DOM refs */
-    const lockScreen      = document.getElementById('lock-screen');
-    const bloomOverlay    = document.getElementById('bloom-overlay');
-    const birthdayScreen  = document.getElementById('birthday-screen');
-    const petalsContainer = document.getElementById('petals-container');
-
-    const cdDays    = document.getElementById('cd-days');
-    const cdHours   = document.getElementById('cd-hours');
-    const cdMinutes = document.getElementById('cd-minutes');
-    const cdSeconds = document.getElementById('cd-seconds');
-
-    /* ---- Countdown ---- */
-    function pad(n) { return String(Math.max(0, n)).padStart(2, '0'); }
-
-    function tick() {
-      const diff = TARGET_DATE - new Date();
-      if (diff <= 0) {
-        setCountdown(0, 0, 0, 0);
-        clearInterval(timer);
-        triggerUnlock();
-        return;
-      }
-      const t = Math.floor(diff / 1000);
-      setCountdown(
-        Math.floor(t / 86400),
-        Math.floor((t % 86400) / 3600),
-        Math.floor((t % 3600) / 60),
-        t % 60
-      );
+  /* ---- Petal spawner ---- */
+  function spawnPetals() {
+    const colors = ['#f7b8c4', '#e8c57a', '#c9708a', '#fff5f7'];
+    for (let i = 0; i < 18; i++) {
+      const el   = document.createElement('div');
+      el.classList.add('petal');
+      const size  = 6 + Math.random() * 10;
+      const left  = Math.random() * 100;
+      const dur   = 7 + Math.random() * 8;
+      const delay = Math.random() * 12;
+      const drift = (Math.random() - 0.5) * 120;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const op    = 0.2 + Math.random() * 0.25;
+      el.style.cssText = `
+        left:${left}%;width:${size}px;height:${size}px;
+        background:${color};
+        --fall-dur:${dur}s;--fall-delay:${delay}s;
+        --drift:${drift}px;--petal-op:${op};
+      `;
+      petalsContainer.appendChild(el);
     }
+  }
 
-    function setCountdown(d, h, m, s) {
-      cdDays.textContent    = pad(d);
-      cdHours.textContent   = pad(h);
-      cdMinutes.textContent = pad(m);
-      cdSeconds.textContent = pad(s);
-    }
-
-    tick();
-    const timer = setInterval(tick, 1000);
-
-    /* ---- Unlock sequence ---- */
-    function triggerUnlock() {
-      bloomOverlay.classList.add('blooming');
-      setTimeout(() => {
-        lockScreen.style.opacity = '0';
-        lockScreen.style.pointerEvents = 'none';
-      }, 400);
-      setTimeout(() => {
-        lockScreen.style.display = 'none';
-        birthdayScreen.classList.add('visible');
-        spawnPetals();
-      }, 900);
-    }
-
-    /* ---- Petal spawner ---- */
-    function spawnPetals() {
-      const colors = ['#f7b8c4', '#e8c57a', '#c9708a', '#fff5f7'];
-      for (let i = 0; i < 18; i++) {
-        const el   = document.createElement('div');
-        el.classList.add('petal');
-        const size  = 6 + Math.random() * 10;
-        const left  = Math.random() * 100;
-        const dur   = 7 + Math.random() * 8;
-        const delay = Math.random() * 12;
-        const drift = (Math.random() - 0.5) * 120;
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        const op    = 0.2 + Math.random() * 0.25;
-        el.style.cssText = `
-          left:${left}%;width:${size}px;height:${size}px;
-          background:${color};
-          --fall-dur:${dur}s;--fall-delay:${delay}s;
-          --drift:${drift}px;--petal-op:${op};
-        `;
-        petalsContainer.appendChild(el);
-      }
-    }
-
-    /* ---- Dev helper ----
-       Open browser console and run unlockNow() to skip the countdown
-       and preview the birthday screen immediately.
-    ---- */
-    window.unlockNow = function () {
-      clearInterval(timer);
+  // Trigger immediately on load
+  window.addEventListener('DOMContentLoaded', () => {
       triggerUnlock();
-    };
-  </script>
+  });
+</script>
 </body>
 </html>
